@@ -44,36 +44,13 @@
 #include <evaluate_compression.h>
 #include <evaluate_compression_impl.hpp>
 
-struct encoder_params
-{
-	int num_threads;
-	bool do_inter_frame;
-	int gop_size;
-	double exp_factor;
-	int octree_bits;
-	int color_bits;
-	int jpeg_quality;
-	int macroblock_size;
-};
-
 int main(int argc, char * argv[]) {
-	encoder_params par;
-	par.num_threads = 4;
-	par.do_inter_frame = false;
-	par.gop_size = 1;
-	par.exp_factor = 0;
-	par.octree_bits = 11;
-	par.color_bits = 8;
-	par.jpeg_quality = 85;
-	par.macroblock_size = 16;
 	int return_value;
 	evaluate_compression_impl<PointXYZRGB> evaluator;
 
 	//return evaluator.evaluate() == true ? 0 : -1;
 	return_value = evaluator.evaluate(argc,argv) == true ? 0 : -1;
-	class __declspec(dllimport) cwi_encode;
-	std::stringstream comp_frame;
-	return_value = cwi_encode.cwi_encoder(par, pc, compframe);
+
 	return return_value;
 	//__declspec(dllimport)
 }

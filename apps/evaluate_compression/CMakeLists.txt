@@ -79,3 +79,4 @@ endif(CMAKELISTS_DEBUG)
 
 add_executable(${SUBSYS_NAME} ${srcs} ${incs} ${impl_incs})
 target_link_libraries(${SUBSYS_NAME} ${${PROJECT_NAME}_LIBRARIES})
+#target_link_libraries(${SUBSYS_NAME} cwi_encode.lib)

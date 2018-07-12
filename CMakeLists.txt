@@ -116,13 +116,13 @@ endif(NOT Eigen_FOUND)
 if(CMAKELISTS_DEBUG)
   message(STATUS "Eigen found (include: ${EIGEN_INCLUDE_DIRS}, version: ${EIGEN_VERSION})")
 endif(CMAKELISTS_DEBUG)
-find_package(JPEG_Turbo ${QUIET_FLAG} REQUIRED)
+#find_package(JPEG_Turbo ${QUIET_FLAG} REQUIRED)
 if(CMAKELISTS_DEBUG)
   message("2.Boost_LIBRARIES=" ${Boost_LIBRARIES})
 endif(CMAKELISTS_DEBUG)
-if(NOT JPEG_Turbo_FOUND)
- message(ERROR "TurboJPEG not found.")
-endif(NOT JPEG_Turbo_FOUND)
+#if(NOT JPEG_Turbo_FOUND)
+# message(ERROR "TurboJPEG not found.")
+#endif(NOT JPEG_Turbo_FOUND)
 
 if(EXISTS "${PCL_ROOT}/include/pcl-${PCL_VERSION_MAJOR}.${PCL_VERSION_MINOR}/pcl/io/impl/entropy_range_coder.hpp")
     set(PCL_INSTALLED ON CACHE INTERNAL "PCL Installed" FORCE)
@@ -130,7 +130,7 @@ endif()
 
 # Expose public includes and libraries to subprojects
 set(${PROJECT_NAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/include
-                                 ${JPEG_Turbo_INCLUDE_DIR}
+                                # ${JPEG_Turbo_INCLUDE_DIR}
                                  ${VTK_INCLUDE_DIR}
                                  ${Boost_INCLUDE_DIR}
                                  ${PCL_INCLUDE_DIRS}
@@ -147,13 +147,13 @@ set(${PROJECT_NAME}_LIBRARY_DIRS ${PROJECT_SOURCE_DIR}/lib
     CACHE INTERNAL "${PROJECT_NAME}: Library Directories" FORCE)
 if(CMAKELISTS_DEBUG)
   message("${SUBSYS_NAME}_LIBRARY_DIRS: " ${${PROJECT_NAME}_LIBRARY_DIRS})
-  message("${SUBSYS_NAME}_JPEG_Turbo_LIBRARY: " ${JPEG_Turbo_LIBRARY})
+  #message("${SUBSYS_NAME}_JPEG_Turbo_LIBRARY: " ${JPEG_Turbo_LIBRARY})
   message("${SUBSYS_NAME}_VTK_LIBRARIES:" ${VTK_LIBRARIES})
   message("${SUBSYS_NAME}_Boost_LIBRARIES: " ${Boost_LIBRARIES})
   message("${SUBSYS_NAME}_PCL_LIBRARIES: " ${PCL_LIBRARIES})
 endif(CMAKELISTS_DEBUG)
 set(${PROJECT_NAME}_LIBRARIES
-                                 ${JPEG_Turbo_LIBRARY}
+               #                  ${JPEG_Turbo_LIBRARY}
                                  ${VTK_LIBRARIES}
                                  ${Boost_LIBRARIES}
                                  ${PCL_LIBRARIES}
@@ -162,7 +162,7 @@ if(CMAKELISTS_DEBUG)
   message("${SUBSYS_NAME}-${PROJECT_NAME}_LIBRARIES: " ${${PROJECT_NAME}_LIBRARIES})
 endif(CMAKELISTS_DEBUG)
 set(${PROJECT_NAME}_DEFINITIONS
-                                 ${JPEG_Turbo_DEFINITIONS} -DWITH_JPEG8=1
+                                # ${JPEG_Turbo_DEFINITIONS} -DWITH_JPEG8=1
                                  ${Boost_DEFINITIONS}
                                  ${PCL_DEFINITIONS}
     CACHE INTERNAL "${PROJECT_NAME}: Definitions" FORCE)

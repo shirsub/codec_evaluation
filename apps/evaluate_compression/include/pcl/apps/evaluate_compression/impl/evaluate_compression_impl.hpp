@@ -64,6 +64,24 @@ namespace po = boost::program_options;
 #include <stdlib.h>
 #include <evaluate_compression.h>
 
+struct encoder_params
+{
+	int num_threads;
+	bool do_inter_frame;
+	int gop_size;
+	double exp_factor;
+	int octree_bits;
+	int color_bits;
+	int jpeg_quality;
+	int macroblock_size;
+};
+class __declspec(dllimport) cwi_encode
+{
+public:
+	int cwi_encoder(encoder_params param, void* pc, std::stringstream& comp_frame);
+	int cwi_decoder(encoder_params param, void* pc, std::stringstream& comp_frame);
+};
+
 template<typename PointT>
 class evaluate_compression_impl : evaluate_compression {
   // using boost::exception on errors
@@ -151,11 +169,29 @@ bool
 evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 {
 	bool return_value = true;
-	boost::shared_ptr<pcl::PointCloud<PointT> > pc(new PointCloud<PointT>());
+	boost::shared_ptr<pcl::PointCloud<PointT> > orgpc(new PointCloud<PointT>());
 	std::string filename;
 	filename = argv[1];
 	//cout << filename;
-	load_input_cloud(filename, pc);
+	load_input_cloud(filename, orgpc);
+	void * pc;
+	pc = reinterpret_cast<void *> (&orgpc);
+	encoder_params par;
+	par.num_threads = 4;
+	par.do_inter_frame = false;
+	par.gop_size = 1;
+	par.exp_factor = 0;
+	par.octree_bits = 11;
+	par.color_bits = 8;
+	par.jpeg_quality = 85;
+	par.macroblock_size = 16;
+	cwi_encode enc;
+	std::stringstream compframe;
+	return_value = enc.cwi_encoder(par, pc, compframe);
+	std::ofstream compressedframe;
+	compressedframe.open("compressedFrame.pcc");
+	compressedframe << compframe.rdbuf();
+	compressedframe.close();
 	return return_value;
 }
 #endif /* evaluate_compression_hpp */
