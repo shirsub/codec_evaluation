@@ -188,10 +188,19 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	cwi_encode enc;
 	std::stringstream compframe;
 	return_value = enc.cwi_encoder(par, pc, compframe);
+	std::cout << "Size of compressed frame after encoding : " << sizeof(compframe);
 	std::ofstream compressedframe;
 	compressedframe.open("compressedFrame.pcc");
 	compressedframe << compframe.rdbuf();
 	compressedframe.close();
+	boost::shared_ptr<pcl::PointCloud<PointT> > decpc(new PointCloud<PointT>());
+	decpc->makeShared();
+	void * dpc;
+	dpc = reinterpret_cast<void *> (&decpc);
+	std::cout << "\n Decoding now";
+	cwi_encode dec;
+	return_value = dec.cwi_decoder(par, dpc, compframe);
+	std::cout << "\n\nDecoded";
 	return return_value;
 }
 #endif /* evaluate_compression_hpp */
