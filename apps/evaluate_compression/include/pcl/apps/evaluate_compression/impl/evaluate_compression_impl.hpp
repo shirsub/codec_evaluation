@@ -78,7 +78,7 @@ struct encoder_params
 class __declspec(dllimport) cwi_encode
 {
 public:
-	int cwi_encoder(encoder_params param, void* pc, std::stringstream& comp_frame);
+	int cwi_encoder(encoder_params param, void* pc, std::stringstream& comp_frame, std::uint64_t timeStamp);
 	int cwi_decoder(encoder_params param, void* pc, std::stringstream& comp_frame);
 };
 
@@ -186,8 +186,9 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	par.jpeg_quality = 85;
 	par.macroblock_size = 16;
 	cwi_encode enc;
+	std::uint64_t t = 0;
 	std::stringstream compframe;
-	return_value = enc.cwi_encoder(par, pc, compframe);
+	return_value = enc.cwi_encoder(par, pc, compframe, t);
 	std::cout << "Size of compressed frame after encoding : " << sizeof(compframe);
 	std::ofstream compressedframe;
 	compressedframe.open("compressedFrame.pcc");
@@ -201,6 +202,11 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	cwi_encode dec;
 	return_value = dec.cwi_decoder(par, dpc, compframe);
 	std::cout << "\n\nDecoded";
+	std::cout << "/n Number of points in decoded cloud: " << (*decpc).points.size();
+	pcl::PCLPointCloud2::Ptr cloud2(new pcl::PCLPointCloud2());
+	pcl::toPCLPointCloud2(*decpc, *cloud2);
+	pcl::PLYWriter writer;
+	writer.write("decodedPC.ply", cloud2);
 	return return_value;
 }
 #endif /* evaluate_compression_hpp */
