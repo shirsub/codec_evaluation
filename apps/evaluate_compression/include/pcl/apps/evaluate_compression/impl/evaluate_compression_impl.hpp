@@ -202,7 +202,7 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	cwi_encode dec;
 	return_value = dec.cwi_decoder(par, dpc, compframe);
 	std::cout << "\n\nDecoded";
-	std::cout << "/n Number of points in decoded cloud: " << (*decpc).points.size();
+	std::cout << "\n Number of points in decoded cloud: " << (*decpc).points.size();
 	pcl::PCLPointCloud2::Ptr cloud2(new pcl::PCLPointCloud2());
 	pcl::toPCLPointCloud2(*decpc, *cloud2);
 	pcl::PLYWriter writer;
