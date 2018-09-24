@@ -177,18 +177,21 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	std::uint64_t t;
 	t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	//cout << filename;
+	
 	load_input_cloud(filename, orgpc);
 	void * pc;
 	pc = reinterpret_cast<void *> (&orgpc);
+	
 	encoder_params par;
 	par.num_threads = 1;
 	par.do_inter_frame = false;
 	par.gop_size = 1;
 	par.exp_factor = 0;
-	par.octree_bits = 9;
+	par.octree_bits = 7;
 	par.color_bits = 8;
 	par.jpeg_quality = 85;
 	par.macroblock_size = 16;
+	
 	cwi_encode enc;
 	std::stringstream compframe;
 	return_value = enc.cwi_encoder(par, pc, compframe, t);
@@ -201,7 +204,8 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	std::stringstream cfr;
 	cfr << file.rdbuf();
 	file.close();
-	// Write again to check for carriage return
+	
+	//Write again to check for carriage return
 	/*
 	std::ofstream compressedframe2;
 	compressedframe2.open("compressedFrame2.pcc");
@@ -210,6 +214,11 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	*/
 	//std::cout << "\n Size of dashed compressed file :" << sizeof(cfr) << "\n";
 	//end dash trial
+	//*/
+	//std::ifstream file(filename, std::fstream::binary);
+	//std::stringstream cfr;
+	//cfr << file.rdbuf();
+	//file.close();
 	boost::shared_ptr<pcl::PointCloud<PointT> > decpc(new PointCloud<PointT>());
 	decpc->makeShared();
 	void * dpc;
@@ -222,7 +231,7 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	//return_value = dec.cwi_decoder(par, dpc, compframe, t1);
 	return_value = dec.cwi_decoder(par, dpc, cfr, t1);
 	//std::cout << "\n\nDecoded";
-	std::cout << "\n Number of points in decoded cloud: " << (*decpc).points.size();
+	std::cout << "\nNumber of points in decoded cloud: " << (*decpc).points.size();
 	std::uint64_t decodeEnd;
 	decodeEnd = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	std::cout << "\nDecode took  :" << decodeEnd - decodeStart << " ms";
@@ -230,7 +239,8 @@ evaluate_compression_impl<PointT>::evaluate(int argc, char** argv)
 	pcl::PCLPointCloud2::Ptr cloud2(new pcl::PCLPointCloud2());
 	pcl::toPCLPointCloud2(*decpc, *cloud2);
 	pcl::PLYWriter writer;
-	writer.write("decodedPC.ply", cloud2);
+	std::string opfile = "decoded_" + filename;
+	writer.write(opfile, cloud2);
 	std::uint64_t endTime;
 	endTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	//std::cout << "\nDecoded ply written\nWhole process took: " << endTime - t1 << " ms";
